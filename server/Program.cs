@@ -25,7 +25,7 @@ app.UseCors(policy =>
           .AllowAnyMethod());
 
 
-// POST endpoint to insert expense data into db
+// POST endpoint to create an expense
 app.MapPost("/expense", (ExpenseDto expense) =>
 {
     using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -45,7 +45,7 @@ app.MapPost("/expense", (ExpenseDto expense) =>
 });
 
 
-// GET endpoint to read expense data from db
+// GET endpoint to read all expenses 
 app.MapGet("/expense", (Expense expense) =>
 {
     using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -67,6 +67,46 @@ app.MapGet("/expense", (Expense expense) =>
         expenses.Add(new Expense(id, amount, category, date, notes));
     }
     return Results.Ok(expenses);
+});
+
+
+// DELETE endpoint to delete an expense
+app.MapDelete("/expense/{id}", (int id) =>
+{
+    using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
+    connection.Open();
+
+    using var cmd = new NpgsqlCommand("DELETE FROM expenses WHERE id = @id", connection);
+    cmd.Parameters.AddWithValue("id", id);
+
+    cmd.ExecuteNonQuery();
+
+    return Results.Ok("Expense deleted successfully.");
+});
+
+
+// PUT endpoint to update and expense
+app.MapPut("/expense/{id}", (int id, ExpenseDto updatedExpense) =>
+{
+    using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
+    connection.Open();
+
+    using var cmd = new NpgsqlCommand(@"UPDATE expenses 
+                                        SET amount = @amount,
+                                            category = @category, 
+                                            date = @date,
+                                            notes = @notes,
+                                        WHERE id = @id", connection);
+
+    cmd.Parameters.AddWithValue("id", id);
+    cmd.Parameters.AddWithValue("amount", updatedExpense.Amount);
+    cmd.Parameters.AddWithValue("category", updatedExpense.Category);
+    cmd.Parameters.AddWithValue("date", updatedExpense.Date);
+    cmd.Parameters.AddWithValue("notes", updatedExpense.Notes);
+
+    cmd.ExecuteNonQuery();
+
+    return Results.Ok($"Successful update for Id {id}.");
 });
 
 app.Run();
