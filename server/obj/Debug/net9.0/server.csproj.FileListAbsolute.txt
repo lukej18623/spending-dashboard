@@ -30,3 +30,4 @@
 /Users/lukeschneider/Desktop/spending-dashboard/server/obj/Debug/net9.0/server.pdb
 /Users/lukeschneider/Desktop/spending-dashboard/server/obj/Debug/net9.0/server.genruntimeconfig.cache
 /Users/lukeschneider/Desktop/spending-dashboard/server/obj/Debug/net9.0/ref/server.dll
+/Users/lukeschneider/Desktop/spending-dashboard/server/obj/Debug/net9.0/server.sourcelink.json

@@ -1,32 +1,40 @@
 using Npgsql;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Enable Swagger
+// Enable Swagger for dev mode, build app 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddCors();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Configure the HTTP request pipeline
 app.UseHttpsRedirection();
 
 // Enable CORS for frontend
-app.UseCors(policy =>
-    policy.WithOrigins("http://localhost:3000")  // Allow React dev server
-          .AllowAnyHeader()
-          .AllowAnyMethod());
+app.UseCors("AllowFrontend");
 
+app.MapGet("/", () => "API is running!");
 
 // POST endpoint to create an expense
-app.MapPost("/expense", (ExpenseDto expense) =>
+app.MapPost("/expense", ([FromBody] ExpenseDto expense) =>
 {
     using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     connection.Open();
@@ -46,7 +54,7 @@ app.MapPost("/expense", (ExpenseDto expense) =>
 
 
 // GET endpoint to read all expenses 
-app.MapGet("/expense", (Expense expense) =>
+app.MapGet("/expense", () =>
 {
     using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     connection.Open();
@@ -58,11 +66,11 @@ app.MapGet("/expense", (Expense expense) =>
 
     while (reader.Read())
     {
-        var id = reader.GetInt32(0);
-        var amount = reader.GetDecimal(1);
-        var category = reader.GetString(2);
-        var date = reader.GetDateTime(3);
-        var notes = reader.GetString(4);
+        int id = reader.GetInt32(0);
+        decimal amount = reader.GetDecimal(1);
+        string category = reader.GetString(2);
+        DateTime date = reader.GetDateTime(3);
+        string notes = reader.GetString(4);
 
         expenses.Add(new Expense(id, amount, category, date, notes));
     }
@@ -95,7 +103,7 @@ app.MapPut("/expense/{id}", (int id, ExpenseDto updatedExpense) =>
                                         SET amount = @amount,
                                             category = @category, 
                                             date = @date,
-                                            notes = @notes,
+                                            notes = @notes
                                         WHERE id = @id", connection);
 
     cmd.Parameters.AddWithValue("id", id);
