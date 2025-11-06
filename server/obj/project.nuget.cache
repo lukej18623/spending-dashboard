@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "c+0PFRcX7hM=",
+  "dgSpecHash": "7IQI3Tfa9Hk=",
   "success": true,
-  "projectFilePath": "/Users/lukeschneider/Desktop/spending-dashboard/server/server.csproj",
+  "projectFilePath": "/Users/lukeschneider/spending-dashboard/server/server.csproj",
   "expectedPackageFiles": [
     "/Users/lukeschneider/.nuget/packages/microsoft.aspnetcore.openapi/9.0.5/microsoft.aspnetcore.openapi.9.0.5.nupkg.sha512",
     "/Users/lukeschneider/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

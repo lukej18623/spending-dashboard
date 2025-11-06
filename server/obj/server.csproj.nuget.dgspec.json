@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/lukeschneider/Desktop/spending-dashboard/server/server.csproj": {}
+    "/Users/lukeschneider/spending-dashboard/server/server.csproj": {}
   },
   "projects": {
-    "/Users/lukeschneider/Desktop/spending-dashboard/server/server.csproj": {
+    "/Users/lukeschneider/spending-dashboard/server/server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/lukeschneider/Desktop/spending-dashboard/server/server.csproj",
+        "projectUniqueName": "/Users/lukeschneider/spending-dashboard/server/server.csproj",
         "projectName": "server",
-        "projectPath": "/Users/lukeschneider/Desktop/spending-dashboard/server/server.csproj",
+        "projectPath": "/Users/lukeschneider/spending-dashboard/server/server.csproj",
         "packagesPath": "/Users/lukeschneider/.nuget/packages/",
-        "outputPath": "/Users/lukeschneider/Desktop/spending-dashboard/server/obj/",
+        "outputPath": "/Users/lukeschneider/spending-dashboard/server/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/lukeschneider/.nuget/NuGet/NuGet.Config"
