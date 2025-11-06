@@ -138,26 +138,6 @@ The frontend is configured to connect to the backend at `http://localhost:5001`.
 4. Navigate to `http://localhost:3000` in your browser
 5. Add, view, edit, or delete expenses through the interface
 
-## Development
-
-### Running Tests
-```bash
-# Frontend tests
-cd client
-npm test
-```
-
-### Building for Production
-```bash
-# Build frontend
-cd client
-npm run build
-
-# Build backend
-cd server
-dotnet publish -c Release
-```
-
 ## Future Enhancements
 
 - User authentication and authorization
@@ -168,15 +148,3 @@ dotnet publish -c Release
 - Date range filtering
 - Search and filter functionality
 - Mobile responsive design improvements
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## Contact
-
-Luke Schneider - [GitHub](https://github.com/yourusername)
-
----
-
-Built with React, ASP.NET Core, and PostgreSQL
