@@ -1,13 +1,13 @@
-# Spending Dashboard
+# Service Business Manager
 
-A full-stack expense tracking application built with React and ASP.NET Core that enables users to manage and monitor their spending habits.
+A lightweight web application for automating traditional service industries (lawn care, plumbing, HVAC, electrical, etc.). Built with React and ASP.NET Core in under 1000 lines of code.
 
 ## Features
 
-- **Create Expenses**: Add new expenses with amount, category, date, and notes
-- **View Expenses**: Display all expenses in an organized list
-- **Update Expenses**: Edit existing expense entries
-- **Delete Expenses**: Remove unwanted expense records
+- **Customer Management**: Track customer information, contact details, and service history
+- **Job Tracking**: Schedule and manage service jobs with status tracking
+- **Invoice Generation**: Automatically create invoices from completed jobs
+- **Multi-Industry Support**: Works for any service-based business
 - **RESTful API**: Clean, documented API endpoints with Swagger integration
 
 ## Tech Stack
@@ -34,28 +34,47 @@ spending-dashboard/
 ├── client/                 # React frontend application
 │   ├── src/
 │   │   ├── apis/          # API service layer
-│   │   ├── App.jsx        # Main application component
-│   │   ├── ExpenseForm.jsx    # Form for creating/editing expenses
-│   │   ├── ExpenseList.jsx    # List component for displaying expenses
-│   │   └── Header.jsx     # Header component
+│   │   ├── App.jsx        # Main app with tab navigation
+│   │   ├── Customers.jsx  # Customer management component
+│   │   ├── Jobs.jsx       # Job management component
+│   │   └── Invoices.jsx   # Invoice management component
 │   └── package.json
 ├── server/                 # ASP.NET Core backend
 │   ├── dtos/              # Data transfer objects
-│   │   ├── Expense.cs     # Expense model with ID
-│   │   └── ExpenseDto.cs  # Expense DTO for API requests
+│   │   ├── Customer.cs    # Customer model
+│   │   ├── Job.cs         # Job model
+│   │   └── Invoice.cs     # Invoice model
 │   ├── Program.cs         # API endpoints and configuration
 │   └── server.csproj
+├── database-schema.sql    # PostgreSQL schema
 └── spending-dashboard.sln  # Solution file
 ```
 
 ## API Endpoints
 
+### Customers
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/expense` | Retrieve all expenses |
-| POST | `/expense` | Create a new expense |
-| PUT | `/expense/{id}` | Update an existing expense |
-| DELETE | `/expense/{id}` | Delete an expense |
+| GET | `/customers` | Retrieve all customers |
+| POST | `/customers` | Create a new customer |
+| PUT | `/customers/{id}` | Update a customer |
+| DELETE | `/customers/{id}` | Delete a customer |
+
+### Jobs
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/jobs` | Retrieve all jobs |
+| POST | `/jobs` | Create a new job |
+| PUT | `/jobs/{id}` | Update a job |
+| DELETE | `/jobs/{id}` | Delete a job |
+
+### Invoices
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/invoices` | Retrieve all invoices |
+| GET | `/invoices/{id}` | Get invoice details with jobs |
+| POST | `/invoices` | Create invoice from jobs |
+| PUT | `/invoices/{id}/status` | Update invoice status |
 
 ## Prerequisites
 
@@ -72,17 +91,13 @@ cd spending-dashboard
 ```
 
 ### 2. Database Setup
-Create a PostgreSQL database and run the following SQL to create the expenses table:
+Create a PostgreSQL database and run the schema from `database-schema.sql`:
 
-```sql
-CREATE TABLE Expenses (
-    id SERIAL PRIMARY KEY,
-    amount DECIMAL(10, 2) NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    date TIMESTAMP NOT NULL,
-    notes TEXT
-);
+```bash
+psql -U postgres -d your_database < database-schema.sql
 ```
+
+Or manually create the tables (see database-schema.sql for the complete schema with sample data).
 
 ### 3. Backend Setup
 ```bash
@@ -122,13 +137,13 @@ Update `server/appsettings.json` with your PostgreSQL connection string:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=spending_db;Username=postgres;Password=yourpassword"
+    "DefaultConnection": "Host=localhost;Database=service_business;Username=postgres;Password=yourpassword"
   }
 }
 ```
 
 ### Frontend Configuration
-The frontend is configured to connect to the backend at `http://localhost:5001`. Update the API base URL in `client/src/apis/expenseApi.js` if your backend runs on a different port.
+The frontend is configured to connect to the backend at `http://localhost:5001`. Update the API base URL in `client/src/apis/api.js` if your backend runs on a different port.
 
 ## Usage
 
@@ -136,15 +151,20 @@ The frontend is configured to connect to the backend at `http://localhost:5001`.
 2. Run the backend server (see Backend Setup)
 3. Run the frontend application (see Frontend Setup)
 4. Navigate to `http://localhost:3000` in your browser
-5. Add, view, edit, or delete expenses through the interface
+5. Use the three tabs to manage:
+   - **Customers**: Add service business customers
+   - **Jobs**: Schedule and track service jobs
+   - **Invoices**: Create invoices from completed jobs and track payment status
 
 ## Future Enhancements
 
-- User authentication and authorization
-- Expense categories with custom icons
-- Budget tracking and alerts
-- Data visualization with charts and graphs
-- Export expenses to CSV/PDF
-- Date range filtering
-- Search and filter functionality
-- Mobile responsive design improvements
+- User authentication for multi-user access
+- SMS/Email notifications for job scheduling
+- Payment processing integration
+- Mobile app for field workers
+- GPS tracking for service locations
+- Photo uploads for job documentation
+- Recurring service scheduling
+- Analytics dashboard with revenue tracking
+- PDF invoice export and email delivery
+- Customer portal for viewing invoices
