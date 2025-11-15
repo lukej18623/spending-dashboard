@@ -1,14 +1,15 @@
-# Service Business Manager
+# Sturgeon Excursions
 
-A lightweight web application for automating traditional service industries (lawn care, plumbing, HVAC, electrical, etc.). Built with React and ASP.NET Core in under 1000 lines of code.
+A modern fishing charter booking website for Sturgeon Excursions. Built with React and ASP.NET Core, featuring a customer-facing booking system with real-time availability and charter management.
 
 ## Features
 
-- **Customer Management**: Track customer information, contact details, and service history
-- **Job Tracking**: Schedule and manage service jobs with status tracking
-- **Invoice Generation**: Automatically create invoices from completed jobs
-- **Multi-Industry Support**: Works for any service-based business
-- **RESTful API**: Clean, documented API endpoints with Swagger integration
+- **Charter Booking**: Book fishing excursions with date selection and package options
+- **About Us**: Company information and fishing expertise showcase
+- **Customer Management**: Track customer bookings and contact information
+- **Real-time Availability**: Live availability checking for charter dates
+- **Modern UI**: Responsive design with gradient aesthetics and smooth interactions
+- **RESTful API**: Clean backend with Swagger documentation
 
 ## Tech Stack
 
@@ -30,24 +31,29 @@ A lightweight web application for automating traditional service industries (law
 ## Project Structure
 
 ```
-spending-dashboard/
+mvp-service-business/
 ├── client/                 # React frontend application
 │   ├── src/
 │   │   ├── apis/          # API service layer
 │   │   ├── App.jsx        # Main app with tab navigation
-│   │   ├── Customers.jsx  # Customer management component
-│   │   ├── Jobs.jsx       # Job management component
-│   │   └── Invoices.jsx   # Invoice management component
+│   │   ├── Home.jsx       # Landing page component
+│   │   ├── BookNow.jsx    # Charter booking form
+│   │   ├── AboutUs.jsx    # Company information page
+│   │   └── index.jsx      # App entry point
 │   └── package.json
 ├── server/                 # ASP.NET Core backend
 │   ├── dtos/              # Data transfer objects
 │   │   ├── Customer.cs    # Customer model
-│   │   ├── Job.cs         # Job model
+│   │   ├── CustomerDto.cs # Customer DTO
+│   │   ├── Job.cs         # Job/Charter model
+│   │   ├── JobDto.cs      # Job DTO
 │   │   └── Invoice.cs     # Invoice model
+│   ├── migrations/        # Database migrations
 │   ├── Program.cs         # API endpoints and configuration
 │   └── server.csproj
 ├── database-schema.sql    # PostgreSQL schema
-└── spending-dashboard.sln  # Solution file
+├── QUICKSTART.md          # Quick setup guide
+└── spending-dashboard.sln # Solution file
 ```
 
 ## API Endpoints
@@ -86,8 +92,8 @@ spending-dashboard/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/spending-dashboard.git
-cd spending-dashboard
+git clone https://github.com/yourusername/mvp-service-business.git
+cd mvp-service-business
 ```
 
 ### 2. Database Setup
@@ -151,20 +157,22 @@ The frontend is configured to connect to the backend at `http://localhost:5001`.
 2. Run the backend server (see Backend Setup)
 3. Run the frontend application (see Frontend Setup)
 4. Navigate to `http://localhost:3000` in your browser
-5. Use the three tabs to manage:
-   - **Customers**: Add service business customers
-   - **Jobs**: Schedule and track service jobs
-   - **Invoices**: Create invoices from completed jobs and track payment status
+5. Explore the application:
+   - **Home**: View the Sturgeon Excursions landing page with featured packages
+   - **Book Now**: Select dates, choose packages, and book fishing charters
+   - **About Us**: Learn about the company and fishing expertise
 
 ## Future Enhancements
 
-- User authentication for multi-user access
-- SMS/Email notifications for job scheduling
-- Payment processing integration
-- Mobile app for field workers
-- GPS tracking for service locations
-- Photo uploads for job documentation
-- Recurring service scheduling
-- Analytics dashboard with revenue tracking
-- PDF invoice export and email delivery
-- Customer portal for viewing invoices
+- User authentication and customer accounts
+- Email/SMS booking confirmations and reminders
+- Online payment processing (Stripe/PayPal integration)
+- Weather API integration for charter planning
+- Photo gallery from past excursions
+- Customer reviews and testimonials
+- Mobile app for on-the-go bookings
+- Multi-day trip packages and pricing tiers
+- Gift certificate purchases
+- Fishing license information and resources
+- Real-time boat location tracking
+- Catch photo upload and sharing
