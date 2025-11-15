@@ -639,11 +639,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/lukeschneider/csharp-app/spending-dashboard/server/server.csproj",
+      "projectUniqueName": "/Users/lukeschneider/csharp-app/mvp-service-business/server/server.csproj",
       "projectName": "server",
-      "projectPath": "/Users/lukeschneider/csharp-app/spending-dashboard/server/server.csproj",
+      "projectPath": "/Users/lukeschneider/csharp-app/mvp-service-business/server/server.csproj",
       "packagesPath": "/Users/lukeschneider/.nuget/packages/",
-      "outputPath": "/Users/lukeschneider/csharp-app/spending-dashboard/server/obj/",
+      "outputPath": "/Users/lukeschneider/csharp-app/mvp-service-business/server/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/lukeschneider/.nuget/NuGet/NuGet.Config"

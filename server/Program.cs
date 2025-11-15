@@ -34,7 +34,7 @@ app.MapGet("/customers", () =>
 {
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
-    using var cmd = new NpgsqlCommand("SELECT * FROM Customers ORDER BY id", conn);
+    using var cmd = new NpgsqlCommand("SELECT id, name, phone, email FROM Customers ORDER BY id", conn);
     using var reader = cmd.ExecuteReader();
     var customers = new List<Customer>();
     while (reader.Read())
@@ -43,9 +43,7 @@ app.MapGet("/customers", () =>
             reader.GetInt32(0),
             reader.GetString(1),
             reader.GetString(2),
-            reader.GetString(3),
-            reader.GetString(4),
-            reader.GetString(5)
+            reader.GetString(3)
         ));
     }
     return Results.Ok(customers);
@@ -56,13 +54,11 @@ app.MapPost("/customers", ([FromBody] CustomerDto customer) =>
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
     using var cmd = new NpgsqlCommand(@"
-        INSERT INTO Customers (name, phone, email, address, industry)
-        VALUES (@name, @phone, @email, @address, @industry) RETURNING id", conn);
-    cmd.Parameters.AddWithValue("name", customer.Name);
-    cmd.Parameters.AddWithValue("phone", customer.Phone);
-    cmd.Parameters.AddWithValue("email", customer.Email);
-    cmd.Parameters.AddWithValue("address", customer.Address);
-    cmd.Parameters.AddWithValue("industry", customer.Industry);
+        INSERT INTO Customers (name, phone, email)
+        VALUES (@name, @phone, @email) RETURNING id", conn);
+    cmd.Parameters.AddWithValue("name", (object)customer.Name ?? DBNull.Value);
+    cmd.Parameters.AddWithValue("phone", (object)customer.Phone ?? DBNull.Value);
+    cmd.Parameters.AddWithValue("email", (object)customer.Email ?? DBNull.Value);
     var id = cmd.ExecuteScalar();
     return Results.Ok(new { id, message = "Customer created" });
 });
@@ -72,14 +68,12 @@ app.MapPut("/customers/{id}", (int id, [FromBody] CustomerDto customer) =>
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
     using var cmd = new NpgsqlCommand(@"
-        UPDATE Customers SET name = @name, phone = @phone, email = @email,
-        address = @address, industry = @industry WHERE id = @id", conn);
+        UPDATE Customers SET name = @name, phone = @phone, email = @email
+        WHERE id = @id", conn);
     cmd.Parameters.AddWithValue("id", id);
-    cmd.Parameters.AddWithValue("name", customer.Name);
-    cmd.Parameters.AddWithValue("phone", customer.Phone);
-    cmd.Parameters.AddWithValue("email", customer.Email);
-    cmd.Parameters.AddWithValue("address", customer.Address);
-    cmd.Parameters.AddWithValue("industry", customer.Industry);
+    cmd.Parameters.AddWithValue("name", (object)customer.Name ?? DBNull.Value);
+    cmd.Parameters.AddWithValue("phone", (object)customer.Phone ?? DBNull.Value);
+    cmd.Parameters.AddWithValue("email", (object)customer.Email ?? DBNull.Value);
     cmd.ExecuteNonQuery();
     return Results.Ok("Customer updated");
 });
@@ -125,10 +119,10 @@ app.MapPost("/jobs", ([FromBody] JobDto job) =>
         INSERT INTO Jobs (customer_id, service_type, description, date, status, price)
         VALUES (@customer_id, @service_type, @description, @date, @status, @price) RETURNING id", conn);
     cmd.Parameters.AddWithValue("customer_id", job.CustomerId);
-    cmd.Parameters.AddWithValue("service_type", job.ServiceType);
-    cmd.Parameters.AddWithValue("description", job.Description);
+    cmd.Parameters.AddWithValue("service_type", (object)job.ServiceType ?? DBNull.Value);
+    cmd.Parameters.AddWithValue("description", (object)job.Description ?? DBNull.Value);
     cmd.Parameters.AddWithValue("date", job.Date);
-    cmd.Parameters.AddWithValue("status", job.Status);
+    cmd.Parameters.AddWithValue("status", (object)job.Status ?? DBNull.Value);
     cmd.Parameters.AddWithValue("price", job.Price);
     var id = cmd.ExecuteScalar();
     return Results.Ok(new { id, message = "Job created" });
