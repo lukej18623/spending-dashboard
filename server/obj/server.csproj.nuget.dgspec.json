@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/lukeschneider/csharp-app/mvp-service-business/server/server.csproj": {}
+    "/Users/lukeschneider/mvps/sturgeon-excursions/server/server.csproj": {}
   },
   "projects": {
-    "/Users/lukeschneider/csharp-app/mvp-service-business/server/server.csproj": {
+    "/Users/lukeschneider/mvps/sturgeon-excursions/server/server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/lukeschneider/csharp-app/mvp-service-business/server/server.csproj",
+        "projectUniqueName": "/Users/lukeschneider/mvps/sturgeon-excursions/server/server.csproj",
         "projectName": "server",
-        "projectPath": "/Users/lukeschneider/csharp-app/mvp-service-business/server/server.csproj",
+        "projectPath": "/Users/lukeschneider/mvps/sturgeon-excursions/server/server.csproj",
         "packagesPath": "/Users/lukeschneider/.nuget/packages/",
-        "outputPath": "/Users/lukeschneider/csharp-app/mvp-service-business/server/obj/",
+        "outputPath": "/Users/lukeschneider/mvps/sturgeon-excursions/server/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/lukeschneider/.nuget/NuGet/NuGet.Config"

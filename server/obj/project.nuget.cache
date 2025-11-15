@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2Vz7qJHb8bE=",
+  "dgSpecHash": "tcYwFgMMsgs=",
   "success": true,
-  "projectFilePath": "/Users/lukeschneider/csharp-app/mvp-service-business/server/server.csproj",
+  "projectFilePath": "/Users/lukeschneider/mvps/sturgeon-excursions/server/server.csproj",
   "expectedPackageFiles": [
     "/Users/lukeschneider/.nuget/packages/microsoft.aspnetcore.openapi/8.0.0/microsoft.aspnetcore.openapi.8.0.0.nupkg.sha512",
     "/Users/lukeschneider/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

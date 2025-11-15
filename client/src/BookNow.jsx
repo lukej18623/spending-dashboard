@@ -42,16 +42,16 @@ export default function BookNow() {
   return (
     <div>
       <div style={{
-        background: 'linear-gradient(135deg, #1e5631 0%, #0f2818 100%)',
+        background: '#ffffff',
         padding: '30px',
         borderRadius: '4px',
         marginBottom: '30px',
-        color: '#d4a574',
+        color: '#1a5490',
         boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-        borderTop: '4px solid #e67e22'
+        borderTop: '4px solid #f59e0b'
       }}>
-        <h2 style={{ margin: '0 0 10px 0', fontSize: '32px', fontWeight: 'bold', letterSpacing: '1px' }}>BOOK YOUR EXCURSION</h2>
-        <p style={{ margin: 0, fontSize: '18px', opacity: 0.9, color: '#ccc' }}>
+        <h2 style={{ margin: '0 0 10px 0', fontSize: '32px', fontWeight: 'bold', letterSpacing: '1px', color: '#1a5490' }}>BOOK YOUR EXCURSION</h2>
+        <p style={{ margin: 0, fontSize: '18px', opacity: 0.9, color: '#333' }}>
           First excursion 50% off for new customers!
         </p>
       </div>
@@ -59,12 +59,12 @@ export default function BookNow() {
       <form onSubmit={handleSubmit} style={{
         marginBottom: '40px',
         padding: '30px',
-        background: '#1a1a1a',
+        background: '#ffffff',
         borderRadius: '4px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
         border: '1px solid #3a3a3a'
       }}>
-        <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#d4a574', fontWeight: 'bold', letterSpacing: '1px' }}>
+        <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#1a5490', fontWeight: 'bold', letterSpacing: '1px' }}>
           {editing ? 'UPDATE BOOKING' : 'NEW BOOKING'}
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
@@ -76,15 +76,15 @@ export default function BookNow() {
             style={{
               padding: '12px 16px',
               borderRadius: '4px',
-              border: '2px solid #3a3a3a',
+              border: '2px solid #ddd',
               fontSize: '15px',
               transition: 'all 0.3s',
               outline: 'none',
-              background: '#2a2a2a',
-              color: '#ccc'
+              background: '#ffffff',
+              color: '#333'
             }}
-            onFocus={(e) => e.target.style.borderColor = '#2d6a4f'}
-            onBlur={(e) => e.target.style.borderColor = '#3a3a3a'}
+            onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+            onBlur={(e) => e.target.style.borderColor = '#ddd'}
           />
           <input
             placeholder="Phone Number"
@@ -94,15 +94,15 @@ export default function BookNow() {
             style={{
               padding: '12px 16px',
               borderRadius: '4px',
-              border: '2px solid #3a3a3a',
+              border: '2px solid #ddd',
               fontSize: '15px',
               transition: 'all 0.3s',
               outline: 'none',
-              background: '#2a2a2a',
-              color: '#ccc'
+              background: '#ffffff',
+              color: '#333'
             }}
-            onFocus={(e) => e.target.style.borderColor = '#2d6a4f'}
-            onBlur={(e) => e.target.style.borderColor = '#3a3a3a'}
+            onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+            onBlur={(e) => e.target.style.borderColor = '#ddd'}
           />
           <input
             placeholder="Email Address"
@@ -113,39 +113,39 @@ export default function BookNow() {
             style={{
               padding: '12px 16px',
               borderRadius: '4px',
-              border: '2px solid #3a3a3a',
+              border: '2px solid #ddd',
               fontSize: '15px',
               transition: 'all 0.3s',
               outline: 'none',
-              background: '#2a2a2a',
-              color: '#ccc'
+              background: '#ffffff',
+              color: '#333'
             }}
-            onFocus={(e) => e.target.style.borderColor = '#2d6a4f'}
-            onBlur={(e) => e.target.style.borderColor = '#3a3a3a'}
+            onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+            onBlur={(e) => e.target.style.borderColor = '#ddd'}
           />
 
           <button
             type="submit"
             style={{
               padding: '12px 24px',
-              background: 'linear-gradient(135deg, #1e5631 0%, #2d6a4f 100%)',
-              color: '#d4a574',
+              background: 'linear-gradient(135deg, #1a5490 0%, #2563eb 100%)',
+              color: '#fcd34d',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '16px',
               fontWeight: 'bold',
               transition: 'all 0.3s',
-              boxShadow: '0 4px 15px rgba(30, 86, 49, 0.6)',
+              boxShadow: '0 4px 15px rgba(26, 84, 144, 0.6)',
               letterSpacing: '0.5px'
             }}
             onMouseEnter={(e) => {
               e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 6px 20px rgba(30, 86, 49, 0.8)';
+              e.target.style.boxShadow = '0 6px 20px rgba(26, 84, 144, 0.8)';
             }}
             onMouseLeave={(e) => {
               e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 4px 15px rgba(30, 86, 49, 0.6)';
+              e.target.style.boxShadow = '0 4px 15px rgba(26, 84, 144, 0.6)';
             }}
           >
             {editing ? 'UPDATE BOOKING' : 'BOOK NOW'}
@@ -175,7 +175,7 @@ export default function BookNow() {
       </form>
 
       <div style={{
-        background: '#1a1a1a',
+        background: '#ffffff',
         borderRadius: '4px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
         overflow: 'hidden',
@@ -185,7 +185,7 @@ export default function BookNow() {
           padding: '20px 20px 15px 20px',
           margin: 0,
           borderBottom: '2px solid #3a3a3a',
-          color: '#d4a574',
+          color: '#1a5490',
           fontWeight: 'bold',
           letterSpacing: '1px'
         }}>
@@ -194,11 +194,11 @@ export default function BookNow() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: 'linear-gradient(to right, #2a2a2a, #1a1a1a)', textAlign: 'left' }}>
-                <th style={{ padding: '15px 20px', fontWeight: '600', color: '#d4a574', fontSize: '14px' }}>Name</th>
-                <th style={{ padding: '15px 20px', fontWeight: '600', color: '#d4a574', fontSize: '14px' }}>Phone</th>
-                <th style={{ padding: '15px 20px', fontWeight: '600', color: '#d4a574', fontSize: '14px' }}>Email</th>
-                <th style={{ padding: '15px 20px', fontWeight: '600', color: '#d4a574', fontSize: '14px' }}>Actions</th>
+              <tr style={{ background: '#f5f5f5', textAlign: 'left' }}>
+                <th style={{ padding: '15px 20px', fontWeight: '600', color: '#1a5490', fontSize: '14px' }}>Name</th>
+                <th style={{ padding: '15px 20px', fontWeight: '600', color: '#1a5490', fontSize: '14px' }}>Phone</th>
+                <th style={{ padding: '15px 20px', fontWeight: '600', color: '#1a5490', fontSize: '14px' }}>Email</th>
+                <th style={{ padding: '15px 20px', fontWeight: '600', color: '#1a5490', fontSize: '14px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -218,22 +218,22 @@ export default function BookNow() {
                   <tr
                     key={c.id}
                     style={{
-                      background: index % 2 === 0 ? '#1a1a1a' : '#222',
+                      background: index % 2 === 0 ? '#ffffff' : '#f9f9f9',
                       transition: 'background 0.2s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#2a2a2a'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = index % 2 === 0 ? '#1a1a1a' : '#222'}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f0f0f0'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = index % 2 === 0 ? '#ffffff' : '#f9f9f9'}
                   >
-                    <td style={{ padding: '15px 20px', borderBottom: '1px solid #3a3a3a', color: '#d4a574' }}>{c.name}</td>
-                    <td style={{ padding: '15px 20px', borderBottom: '1px solid #3a3a3a', color: '#ccc' }}>{c.phone}</td>
-                    <td style={{ padding: '15px 20px', borderBottom: '1px solid #3a3a3a', color: '#ccc' }}>{c.email}</td>
-                    <td style={{ padding: '15px 20px', borderBottom: '1px solid #3a3a3a' }}>
+                    <td style={{ padding: '15px 20px', borderBottom: '1px solid #ddd', color: '#1a5490', fontWeight: '600' }}>{c.name}</td>
+                    <td style={{ padding: '15px 20px', borderBottom: '1px solid #ddd', color: '#333' }}>{c.phone}</td>
+                    <td style={{ padding: '15px 20px', borderBottom: '1px solid #ddd', color: '#333' }}>{c.email}</td>
+                    <td style={{ padding: '15px 20px', borderBottom: '1px solid #ddd' }}>
                       <button
                         onClick={() => handleEdit(c)}
                         style={{
                           marginRight: '8px',
                           padding: '8px 16px',
-                          background: '#e67e22',
+                          background: '#f59e0b',
                           color: '#1a1a1a',
                           border: 'none',
                           borderRadius: '4px',
@@ -243,11 +243,11 @@ export default function BookNow() {
                           transition: 'all 0.2s'
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.background = '#d35400';
+                          e.target.style.background = '#d97706';
                           e.target.style.transform = 'scale(1.05)';
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.background = '#e67e22';
+                          e.target.style.background = '#f59e0b';
                           e.target.style.transform = 'scale(1)';
                         }}
                       >
