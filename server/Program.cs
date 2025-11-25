@@ -27,7 +27,55 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 
-app.MapGet("/", () => "Service Business Management API");
+app.MapGet("/", () => "Sturgeon Excursions");
+
+
+bool IsDateAvailable(NpgsqlConnection conn, int excursionId, DateTime bookingDate, string timeSlot)
+{
+    // 1. Check if date is in the past
+    if (bookingDate.Date < DateTime.UtcNow.Date)
+    {
+        return false;
+    }
+
+    // 2. Use PostgreSQL function for the rest
+    using var cmd = new NpgsqlCommand(@"
+        SELECT check_availability(@excursionId, @bookingDate, @timeSlot)", conn);
+    cmd.Parameters.AddWithValue("@excursionId", excursionId);
+    cmd.Parameters.AddWithValue("@bookingDate", bookingDate.Date);
+    cmd.Parameters.AddWithValue("@timeSlot", timeSlot);
+
+    return (bool)cmd.ExecuteScalar()!;
+}
+
+app.MapGet("/excursions/{id}/availability", (int id, int days = 90) =>
+// return available dates for the next 90 days
+// use availableDates view
+// line 181 in schema
+{
+    using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
+    conn.Open();
+
+    using var cmd = new NpgsqlCommand(@"
+        SELECT charter_id, charter_name, available_date FROM AvailableDates
+        WHERE charter_id = @id AND available_date BETWEEN CURRENT_DATE AND CURRENT_DATE + @days 
+        ORDER BY available_date", conn);
+
+    cmd.Parameters.AddWithValue("@id", id);
+    cmd.Parameters.AddWithValue("@days", days);
+
+    using var reader = cmd.ExecuteReader();
+    var availableDates = new List<AvailabilityResponse>();
+    while (reader.Read())
+    {
+        availableDates.Add(new AvailabilityResponse(
+            reader.GetInt32(0),
+            reader.GetString(1),
+            reader.GetDateTime(2)
+        ));
+    }
+    return Results.Ok(availableDates);  
+});
 
 // CUSTOMER ENDPOINTS
 app.MapGet("/customers", () =>
@@ -88,206 +136,66 @@ app.MapDelete("/customers/{id}", (int id) =>
     return Results.Ok("Customer deleted");
 });
 
-// JOB ENDPOINTS
-app.MapGet("/jobs", () =>
+
+// EXCURSION ENDPOINTS
+app.MapGet("/excursions", () =>
 {
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
-    using var cmd = new NpgsqlCommand("SELECT * FROM Jobs ORDER BY date DESC", conn);
+
+    using var cmd = new NpgsqlCommand(@"
+        SELECT id, name, description, duration_hours, base_price, max_capacity, is_active, created_at, updated_at 
+        FROM Excursions
+        WHERE is_active = true
+        ORDER BY id", conn);
+
     using var reader = cmd.ExecuteReader();
-    var jobs = new List<Job>();
+    var excursions = new List<Excursion>();
     while (reader.Read())
     {
-        jobs.Add(new Job(
+        excursions.Add(new Excursion(
             reader.GetInt32(0),
-            reader.GetInt32(1),
+            reader.GetString(1),
             reader.GetString(2),
-            reader.GetString(3),
-            reader.GetDateTime(4),
-            reader.GetString(5),
-            reader.GetDecimal(6)
-        ));
-    }
-    return Results.Ok(jobs);
-});
-
-app.MapPost("/jobs", ([FromBody] JobDto job) =>
-{
-    using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
-    conn.Open();
-    using var cmd = new NpgsqlCommand(@"
-        INSERT INTO Jobs (customer_id, service_type, description, date, status, price)
-        VALUES (@customer_id, @service_type, @description, @date, @status, @price) RETURNING id", conn);
-    cmd.Parameters.AddWithValue("customer_id", job.CustomerId);
-    cmd.Parameters.AddWithValue("service_type", (object)job.ServiceType ?? DBNull.Value);
-    cmd.Parameters.AddWithValue("description", (object)job.Description ?? DBNull.Value);
-    cmd.Parameters.AddWithValue("date", job.Date);
-    cmd.Parameters.AddWithValue("status", (object)job.Status ?? DBNull.Value);
-    cmd.Parameters.AddWithValue("price", job.Price);
-    var id = cmd.ExecuteScalar();
-    return Results.Ok(new { id, message = "Job created" });
-});
-
-app.MapPut("/jobs/{id}", (int id, [FromBody] JobDto job) =>
-{
-    using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
-    conn.Open();
-    using var cmd = new NpgsqlCommand(@"
-        UPDATE Jobs SET customer_id = @customer_id, service_type = @service_type,
-        description = @description, date = @date, status = @status, price = @price
-        WHERE id = @id", conn);
-    cmd.Parameters.AddWithValue("id", id);
-    cmd.Parameters.AddWithValue("customer_id", job.CustomerId);
-    cmd.Parameters.AddWithValue("service_type", job.ServiceType);
-    cmd.Parameters.AddWithValue("description", job.Description);
-    cmd.Parameters.AddWithValue("date", job.Date);
-    cmd.Parameters.AddWithValue("status", job.Status);
-    cmd.Parameters.AddWithValue("price", job.Price);
-    cmd.ExecuteNonQuery();
-    return Results.Ok("Job updated");
-});
-
-app.MapDelete("/jobs/{id}", (int id) =>
-{
-    using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
-    conn.Open();
-    using var cmd = new NpgsqlCommand("DELETE FROM Jobs WHERE id = @id", conn);
-    cmd.Parameters.AddWithValue("id", id);
-    cmd.ExecuteNonQuery();
-    return Results.Ok("Job deleted");
-});
-
-// INVOICE ENDPOINTS
-app.MapGet("/invoices", () =>
-{
-    using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
-    conn.Open();
-    using var cmd = new NpgsqlCommand(@"
-        SELECT i.id, i.customer_id, i.invoice_date, i.total_amount, i.status, c.name
-        FROM Invoices i JOIN Customers c ON i.customer_id = c.id
-        ORDER BY i.invoice_date DESC", conn);
-    using var reader = cmd.ExecuteReader();
-    var invoices = new List<Invoice>();
-    while (reader.Read())
-    {
-        invoices.Add(new Invoice(
-            reader.GetInt32(0),
-            reader.GetInt32(1),
-            reader.GetDateTime(2),
             reader.GetDecimal(3),
-            reader.GetString(4),
-            reader.GetString(5),
-            new List<Job>()
+            reader.GetDecimal(4),
+            reader.GetInt32(5),
+            reader.GetBool(6),
+            reader.GetDateTime(7),
+            reader.GetDateTime(8)
         ));
     }
-    return Results.Ok(invoices);
+    return Results.Ok(excursions);
 });
 
-app.MapGet("/invoices/{id}", (int id) =>
+
+app.MapGet("/excursions/{id}", (int id) =>
 {
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
-
     using var cmd = new NpgsqlCommand(@"
-        SELECT i.id, i.customer_id, i.invoice_date, i.total_amount, i.status, c.name
-        FROM Invoices i JOIN Customers c ON i.customer_id = c.id
-        WHERE i.id = @id", conn);
-    cmd.Parameters.AddWithValue("id", id);
+        SELECT id, name, description, duration_hours, base_price, max_capacity, is_active, created_at, updated_at 
+        FROM Excursions 
+        WHERE id = @id", conn);
+    cmd.Parameters.AddWithValue("@id", id);
+    
     using var reader = cmd.ExecuteReader();
-
-    if (!reader.Read())
-        return Results.NotFound();
-
-    var invoice = new Invoice(
-        reader.GetInt32(0),
-        reader.GetInt32(1),
-        reader.GetDateTime(2),
-        reader.GetDecimal(3),
-        reader.GetString(4),
-        reader.GetString(5),
-        new List<Job>()
-    );
-    reader.Close();
-
-    using var jobCmd = new NpgsqlCommand(@"
-        SELECT j.id, j.customer_id, j.service_type, j.description, j.date, j.status, j.price
-        FROM Jobs j JOIN InvoiceJobs ij ON j.id = ij.job_id
-        WHERE ij.invoice_id = @invoice_id", conn);
-    jobCmd.Parameters.AddWithValue("invoice_id", id);
-    using var jobReader = jobCmd.ExecuteReader();
-
-    var jobs = new List<Job>();
-    while (jobReader.Read())
+    if (reader.Read())
     {
-        jobs.Add(new Job(
-            jobReader.GetInt32(0),
-            jobReader.GetInt32(1),
-            jobReader.GetString(2),
-            jobReader.GetString(3),
-            jobReader.GetDateTime(4),
-            jobReader.GetString(5),
-            jobReader.GetDecimal(6)
-        ));
+        var excursion = new Excursion(
+            reader.GetInt32(0),      // id
+            reader.GetString(1),     // name
+            reader.GetString(2),     // description
+            reader.GetDecimal(3),    // duration_hours
+            reader.GetDecimal(4),    // base_price
+            reader.GetInt32(5),      // max_capacity
+            reader.GetBool(6),       // is_active
+            reader.GetDateTime(7),   // created_at
+            reader.GetDateTime(8)    // updated_at
+        );
+        return Results.Ok(excursion);
     }
-
-    return Results.Ok(new Invoice(invoice.Id, invoice.CustomerId, invoice.InvoiceDate,
-        invoice.TotalAmount, invoice.Status, invoice.CustomerName, jobs));
-});
-
-app.MapPost("/invoices", ([FromBody] InvoiceRequest req) =>
-{
-    using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
-    conn.Open();
-    using var transaction = conn.BeginTransaction();
-
-    try
-    {
-        decimal total = 0;
-        foreach (var jobId in req.JobIds)
-        {
-            using var priceCmd = new NpgsqlCommand("SELECT price FROM Jobs WHERE id = @id", conn);
-            priceCmd.Parameters.AddWithValue("id", jobId);
-            var price = priceCmd.ExecuteScalar();
-            if (price != null) total += (decimal)price;
-        }
-
-        using var cmd = new NpgsqlCommand(@"
-            INSERT INTO Invoices (customer_id, invoice_date, total_amount, status)
-            VALUES (@customer_id, @invoice_date, @total_amount, @status) RETURNING id", conn);
-        cmd.Parameters.AddWithValue("customer_id", req.CustomerId);
-        cmd.Parameters.AddWithValue("invoice_date", DateTime.Now);
-        cmd.Parameters.AddWithValue("total_amount", total);
-        cmd.Parameters.AddWithValue("status", "Pending");
-        var invoiceId = (int)cmd.ExecuteScalar();
-
-        foreach (var jobId in req.JobIds)
-        {
-            using var linkCmd = new NpgsqlCommand(@"
-                INSERT INTO InvoiceJobs (invoice_id, job_id) VALUES (@invoice_id, @job_id)", conn);
-            linkCmd.Parameters.AddWithValue("invoice_id", invoiceId);
-            linkCmd.Parameters.AddWithValue("job_id", jobId);
-            linkCmd.ExecuteNonQuery();
-        }
-
-        transaction.Commit();
-        return Results.Ok(new { id = invoiceId, total, message = "Invoice created" });
-    }
-    catch
-    {
-        transaction.Rollback();
-        throw;
-    }
-});
-
-app.MapPut("/invoices/{id}/status", (int id, [FromBody] StatusUpdate update) =>
-{
-    using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
-    conn.Open();
-    using var cmd = new NpgsqlCommand("UPDATE Invoices SET status = @status WHERE id = @id", conn);
-    cmd.Parameters.AddWithValue("id", id);
-    cmd.Parameters.AddWithValue("status", update.Status);
-    cmd.ExecuteNonQuery();
-    return Results.Ok("Invoice status updated");
+    return Results.NotFound(new { message = "Excursion not found" });
 });
 
 app.Run();

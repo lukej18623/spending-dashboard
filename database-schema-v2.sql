@@ -5,10 +5,10 @@
 -- ============================================
 
 -- ============================================
--- 1. CHARTERS TABLE (Trip Templates)
+-- 1. EXCURSIONS TABLE (Trip Templates)
 -- ============================================
 -- Defines the types of fishing trips offered
-CREATE TABLE Charters (
+CREATE TABLE Excursions (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
