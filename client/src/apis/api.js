@@ -1,46 +1,31 @@
-const API_BASE = 'http://localhost:5001';
+const API_BASE_URL = 'http://localhost:5001';
 
-export const customerApi = {
-  getAll: () => fetch(`${API_BASE}/customers`).then(r => r.json()),
-  create: (data) => fetch(`${API_BASE}/customers`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(r => r.json()),
-  update: (id, data) => fetch(`${API_BASE}/customers/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(r => r.json()),
-  delete: (id) => fetch(`${API_BASE}/customers/${id}`, { method: 'DELETE' }).then(r => r.json())
+// Excursion endpoints
+export const getExcursions = async () => {
+  const response = await fetch(`${API_BASE_URL}/excursions`);
+  if (!response.ok) throw new Error('Failed to fetch excursions');
+  return response.json();
 };
 
-export const jobApi = {
-  getAll: () => fetch(`${API_BASE}/jobs`).then(r => r.json()),
-  create: (data) => fetch(`${API_BASE}/jobs`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(r => r.json()),
-  update: (id, data) => fetch(`${API_BASE}/jobs/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(r => r.json()),
-  delete: (id) => fetch(`${API_BASE}/jobs/${id}`, { method: 'DELETE' }).then(r => r.json())
+export const getExcursion = async (id) => {
+  const response = await fetch(`${API_BASE_URL}/excursions/${id}`);
+  if (!response.ok) throw new Error('Failed to fetch excursion');
+  return response.json();
 };
 
-export const invoiceApi = {
-  getAll: () => fetch(`${API_BASE}/invoices`).then(r => r.json()),
-  getById: (id) => fetch(`${API_BASE}/invoices/${id}`).then(r => r.json()),
-  create: (data) => fetch(`${API_BASE}/invoices`, {
+export const getAvailability = async (excursionId, days = 90) => {
+  const response = await fetch(`${API_BASE_URL}/excursions/${excursionId}/availability?days=${days}`);
+  if (!response.ok) throw new Error('Failed to fetch availability');
+  return response.json();
+};
+
+// Booking endpoints
+export const createBooking = async (bookingData) => {
+  const response = await fetch(`${API_BASE_URL}/bookings`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(r => r.json()),
-  updateStatus: (id, status) => fetch(`${API_BASE}/invoices/${id}/status`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status })
-  }).then(r => r.json())
+    body: JSON.stringify(bookingData)
+  });
+  if (!response.ok) throw new Error('Failed to create booking');
+  return response.json();
 };

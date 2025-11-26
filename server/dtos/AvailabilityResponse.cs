@@ -1,5 +1,8 @@
 public record AvailabilityResponse(
-    int Id, 
-    string Name,
-    DateTime created_at, 
+    int ExcursionId,
+    string ExcursionName,
+    DateTime AvailableDate,
+    bool MorningAvailable,
+    bool AfternoonAvailable,
+    bool FulldayAvailable
 );

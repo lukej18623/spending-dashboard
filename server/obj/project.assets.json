@@ -639,11 +639,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/lukeschneider/mvps/sturgeon-excursions/server/server.csproj",
+      "projectUniqueName": "/Users/lukeschneider/Desktop/business/sturgeon-excursions/server/server.csproj",
       "projectName": "server",
-      "projectPath": "/Users/lukeschneider/mvps/sturgeon-excursions/server/server.csproj",
+      "projectPath": "/Users/lukeschneider/Desktop/business/sturgeon-excursions/server/server.csproj",
       "packagesPath": "/Users/lukeschneider/.nuget/packages/",
-      "outputPath": "/Users/lukeschneider/mvps/sturgeon-excursions/server/obj/",
+      "outputPath": "/Users/lukeschneider/Desktop/business/sturgeon-excursions/server/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/lukeschneider/.nuget/NuGet/NuGet.Config"

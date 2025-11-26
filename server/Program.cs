@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:3001")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -41,7 +41,7 @@ app.MapGet("/excursions", () =>
 
     using var cmd = new NpgsqlCommand(@"
         SELECT id, name, description, duration_hours, base_price, max_capacity, is_active, created_at, updated_at
-        FROM Excursions
+        FROM excursions
         WHERE is_active = true
         ORDER BY id", conn);
 
@@ -72,7 +72,7 @@ app.MapGet("/excursions/{id}", (int id) =>
 
     using var cmd = new NpgsqlCommand(@"
         SELECT id, name, description, duration_hours, base_price, max_capacity, is_active, created_at, updated_at
-        FROM Excursions
+        FROM excursions
         WHERE id = @id", conn);
     cmd.Parameters.AddWithValue("@id", id);
 
@@ -103,7 +103,7 @@ app.MapGet("/excursions/{id}/availability", (int id, int days = 90) =>
 
     using var cmd = new NpgsqlCommand(@"
         SELECT excursion_id, excursion_name, available_date, morning_available, afternoon_available, fullday_available
-        FROM AvailableDates
+        FROM availabledates
         WHERE excursion_id = @id AND available_date BETWEEN CURRENT_DATE AND CURRENT_DATE + @days
         ORDER BY available_date", conn);
 
@@ -136,7 +136,7 @@ app.MapGet("/customers", () =>
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
 
-    using var cmd = new NpgsqlCommand("SELECT id, name, phone, email, created_at FROM Customers ORDER BY id", conn);
+    using var cmd = new NpgsqlCommand("SELECT id, name, phone, email, created_at FROM customers ORDER BY id", conn);
     using var reader = cmd.ExecuteReader();
     var customers = new List<Customer>();
     while (reader.Read())
@@ -159,7 +159,7 @@ app.MapPost("/customers", ([FromBody] CustomerDto dto) =>
     conn.Open();
 
     using var cmd = new NpgsqlCommand(@"
-        INSERT INTO Customers (name, phone, email)
+        INSERT INTO customers (name, phone, email)
         VALUES (@name, @phone, @email) RETURNING id", conn);
     cmd.Parameters.AddWithValue("name", dto.Name);
     cmd.Parameters.AddWithValue("phone", dto.Phone);
@@ -176,7 +176,7 @@ app.MapPut("/customers/{id}", (int id, [FromBody] CustomerDto dto) =>
     conn.Open();
 
     using var cmd = new NpgsqlCommand(@"
-        UPDATE Customers SET name = @name, phone = @phone, email = @email
+        UPDATE customers SET name = @name, phone = @phone, email = @email
         WHERE id = @id", conn);
     cmd.Parameters.AddWithValue("id", id);
     cmd.Parameters.AddWithValue("name", dto.Name);
@@ -197,7 +197,7 @@ app.MapDelete("/customers/{id}", (int id) =>
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
 
-    using var cmd = new NpgsqlCommand("DELETE FROM Customers WHERE id = @id", conn);
+    using var cmd = new NpgsqlCommand("DELETE FROM customers WHERE id = @id", conn);
     cmd.Parameters.AddWithValue("id", id);
 
     var rowsAffected = cmd.ExecuteNonQuery();
@@ -221,9 +221,9 @@ app.MapGet("/bookings", () =>
     using var cmd = new NpgsqlCommand(@"
         SELECT b.id, b.customer_id, c.name as customer_name, b.excursion_id, e.name as excursion_name,
                b.booking_date, b.time_slot, b.num_guests, b.total_price, b.status, b.special_requests, b.created_at
-        FROM Bookings b
-        JOIN Customers c ON b.customer_id = c.id
-        JOIN Excursions e ON b.excursion_id = e.id
+        FROM bookings b
+        JOIN customers c ON b.customer_id = c.id
+        JOIN excursions e ON b.excursion_id = e.id
         ORDER BY b.booking_date DESC, b.created_at DESC", conn);
 
     using var reader = cmd.ExecuteReader();
@@ -257,9 +257,9 @@ app.MapGet("/bookings/{id}", (int id) =>
     using var cmd = new NpgsqlCommand(@"
         SELECT b.id, b.customer_id, c.name as customer_name, b.excursion_id, e.name as excursion_name,
                b.booking_date, b.time_slot, b.num_guests, b.total_price, b.status, b.special_requests, b.created_at
-        FROM Bookings b
-        JOIN Customers c ON b.customer_id = c.id
-        JOIN Excursions e ON b.excursion_id = e.id
+        FROM bookings b
+        JOIN customers c ON b.customer_id = c.id
+        JOIN excursions e ON b.excursion_id = e.id
         WHERE b.id = @id", conn);
     cmd.Parameters.AddWithValue("@id", id);
 
@@ -320,13 +320,13 @@ app.MapPost("/bookings", ([FromBody] BookingDto dto) =>
     }
 
     // Step 3: Get base price for calculation
-    using var priceCmd = new NpgsqlCommand("SELECT base_price FROM Excursions WHERE id = @id", conn);
+    using var priceCmd = new NpgsqlCommand("SELECT base_price FROM excursions WHERE id = @id", conn);
     priceCmd.Parameters.AddWithValue("@id", dto.ExcursionId);
     var basePrice = (decimal)priceCmd.ExecuteScalar()!;
 
     // Step 4: Create the booking
     using var insertCmd = new NpgsqlCommand(@"
-        INSERT INTO Bookings (customer_id, excursion_id, booking_date, time_slot, num_guests, total_price, special_requests)
+        INSERT INTO bookings (customer_id, excursion_id, booking_date, time_slot, num_guests, total_price, special_requests)
         VALUES (@customerId, @excursionId, @bookingDate, @timeSlot, @numGuests, @totalPrice, @specialRequests)
         RETURNING id", conn);
     insertCmd.Parameters.AddWithValue("@customerId", dto.CustomerId);
@@ -348,7 +348,7 @@ app.MapPatch("/bookings/{id}/status", (int id, [FromBody] BookingStatusUpdate up
     conn.Open();
 
     using var cmd = new NpgsqlCommand(@"
-        UPDATE Bookings SET status = @status WHERE id = @id", conn);
+        UPDATE bookings SET status = @status WHERE id = @id", conn);
     cmd.Parameters.AddWithValue("@id", id);
     cmd.Parameters.AddWithValue("@status", update.Status);
 
@@ -366,7 +366,7 @@ app.MapDelete("/bookings/{id}", (int id) =>
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
 
-    using var cmd = new NpgsqlCommand("DELETE FROM Bookings WHERE id = @id", conn);
+    using var cmd = new NpgsqlCommand("DELETE FROM bookings WHERE id = @id", conn);
     cmd.Parameters.AddWithValue("@id", id);
 
     var rowsAffected = cmd.ExecuteNonQuery();
@@ -389,7 +389,7 @@ app.MapGet("/blocked-dates", () =>
 
     using var cmd = new NpgsqlCommand(@"
         SELECT id, block_date, reason, excursion_id, created_by, created_at
-        FROM BlockedDates
+        FROM blockeddates
         ORDER BY block_date", conn);
 
     using var reader = cmd.ExecuteReader();
@@ -420,7 +420,7 @@ app.MapPost("/blocked-dates", ([FromBody] BlockedDateDto dto) =>
     conn.Open();
 
     using var cmd = new NpgsqlCommand(@"
-        INSERT INTO BlockedDates (block_date, reason, excursion_id, created_by)
+        INSERT INTO blockeddates (block_date, reason, excursion_id, created_by)
         VALUES (@blockDate, @reason, @excursionId, @createdBy) RETURNING id", conn);
     cmd.Parameters.AddWithValue("@blockDate", blockDate.Date);
     cmd.Parameters.AddWithValue("@reason", dto.Reason);
@@ -437,7 +437,7 @@ app.MapDelete("/blocked-dates/{id}", (int id) =>
     using var conn = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
     conn.Open();
 
-    using var cmd = new NpgsqlCommand("DELETE FROM BlockedDates WHERE id = @id", conn);
+    using var cmd = new NpgsqlCommand("DELETE FROM blockeddates WHERE id = @id", conn);
     cmd.Parameters.AddWithValue("@id", id);
 
     var rowsAffected = cmd.ExecuteNonQuery();
@@ -450,85 +450,3 @@ app.MapDelete("/blocked-dates/{id}", (int id) =>
 
 app.Run();
 
-// ============================================
-// DTOs and Records
-// ============================================
-
-public record Excursion(
-    int Id,
-    string Name,
-    string Description,
-    decimal DurationHours,
-    decimal BasePrice,
-    int MaxCapacity,
-    bool IsActive,
-    DateTime CreatedAt,
-    DateTime UpdatedAt
-);
-
-public record AvailabilityResponse(
-    int ExcursionId,
-    string ExcursionName,
-    DateTime AvailableDate,
-    bool MorningAvailable,
-    bool AfternoonAvailable,
-    bool FulldayAvailable
-);
-
-public record Customer(
-    int Id,
-    string Name,
-    string Phone,
-    string Email,
-    DateTime CreatedAt
-);
-
-public record CustomerDto(
-    string Name,
-    string Phone,
-    string Email
-);
-
-public record BookingResponse(
-    int Id,
-    int CustomerId,
-    string CustomerName,
-    int ExcursionId,
-    string ExcursionName,
-    DateTime BookingDate,
-    string TimeSlot,
-    int NumGuests,
-    decimal TotalPrice,
-    string Status,
-    string? SpecialRequests,
-    DateTime CreatedAt
-);
-
-public record BookingDto(
-    int CustomerId,
-    int ExcursionId,
-    string BookingDate,
-    string TimeSlot,
-    int NumGuests,
-    string? SpecialRequests
-);
-
-public record BookingStatusUpdate(
-    string Status
-);
-
-public record BlockedDate(
-    int Id,
-    DateTime BlockDate,
-    string Reason,
-    int? ExcursionId,
-    string? CreatedBy,
-    DateTime CreatedAt
-);
-
-public record BlockedDateDto(
-    string BlockDate,
-    string Reason,
-    int? ExcursionId,
-    string? CreatedBy
-);
