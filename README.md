@@ -1,7 +1,7 @@
 # Sturgeon Excursions
-## ~1,200 lines of source code
+##  ~1,200 lines of source code
 
-A professional fishing charter booking website for Sturgeon Excursions. Built with React and ASP.NET Core, featuring real-time availability checking, booking management, and an intuitive customer-facing interface.
+A modern fishing charter booking website for Sturgeon Excursions. Built with React and ASP.NET Core, featuring a customer-facing booking system with real-time availability and charter management.
 
 ## Features
 - **Excursion Booking System**: Book fishing charters with date selection, time slot selection (morning/afternoon/full-day), and guest count
